@@ -89,5 +89,6 @@ jobs:
 
       - name: Compose up (build & restart)
         run: |
-          docker compose down
-          docker compose up --build -d
+          sudo docker compose down || true
+          sudo docker compose up --build -d
+
