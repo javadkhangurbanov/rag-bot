@@ -16,6 +16,7 @@ _bedrock = boto3.client(
     config=Config(retries={"max_attempts": 3, "mode": "standard"}),
 )
 
+
 def embed_texts(texts: list[str]) -> list[list[float]]:
     """
     Titan v2 text embeddings via Bedrock.

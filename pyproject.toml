@@ -1,11 +1,9 @@
 [tool.black]
 line-length = 100
 target-version = ["py311"]
-extend-exclude = [
-  "data/",
-  "assets/",
-  ".venv/",
-]
+extend-exclude = '''
+/data/|/assets/|/.venv/
+'''
 
 [tool.isort]
 profile = "black"

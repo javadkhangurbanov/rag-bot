@@ -12,6 +12,7 @@ load_dotenv()
 CHROMA_DIR = os.getenv("CHROMA_DIR", "./data/chroma")
 COLLECTION_NAME = "kb_main"
 
+
 def _get_client():
     os.makedirs(CHROMA_DIR, exist_ok=True)
     print(">> CHROMA_DIR:", os.path.abspath(CHROMA_DIR))
@@ -20,6 +21,7 @@ def _get_client():
         settings=Settings(anonymized_telemetry=False),
     )
     return client
+
 
 def get_collection():
     client = _get_client()
@@ -36,6 +38,7 @@ def get_collection():
             metadata={"hnsw:space": "cosine"},
         )
     return col
+
 
 def simple_chunk(text: str, chunk_size: int = 800, overlap: int = 100) -> list[str]:
     """
@@ -61,6 +64,7 @@ def simple_chunk(text: str, chunk_size: int = 800, overlap: int = 100) -> list[s
         start += step
     return chunks
 
+
 def load_files_from_folder(folder: str) -> List[Dict[str, Any]]:
     """
     Reads .txt/.md files and returns [{"doc_id":..., "text":..., "metadata":{...}}, ...]
@@ -75,12 +79,15 @@ def load_files_from_folder(folder: str) -> List[Dict[str, Any]]:
             raw = f.read()
         chunks = simple_chunk(raw)
         for i, ch in enumerate(chunks):
-            out.append({
-                "doc_id": f"{os.path.basename(path)}::{i}",
-                "text": ch,
-                "metadata": {"source": os.path.basename(path), "chunk": i, "path": path},
-            })
+            out.append(
+                {
+                    "doc_id": f"{os.path.basename(path)}::{i}",
+                    "text": ch,
+                    "metadata": {"source": os.path.basename(path), "chunk": i, "path": path},
+                }
+            )
     return out
+
 
 def ingest_folder(folder: str) -> int:
     """
@@ -101,6 +108,7 @@ def ingest_folder(folder: str) -> int:
     col.upsert(ids=ids, documents=texts, embeddings=vectors, metadatas=metas)
     return len(docs)
 
+
 def retrieve(query: str, k: int = 4) -> list[dict]:
     col = get_collection()
     qv = embed_texts([query])[0]
@@ -117,12 +125,14 @@ def retrieve(query: str, k: int = 4) -> list[dict]:
         metas = results["metadatas"][0]
         dists = results["distances"][0]
         for i in range(len(docs)):
-            out.append({
-                "id": ids[i] if i < len(ids) else None,
-                "text": docs[i],
-                "metadata": metas[i],
-                "distance": dists[i],
-            })
+            out.append(
+                {
+                    "id": ids[i] if i < len(ids) else None,
+                    "text": docs[i],
+                    "metadata": metas[i],
+                    "distance": dists[i],
+                }
+            )
     return out
 
 

@@ -14,9 +14,13 @@ from .rag_store import format_context, ingest_folder, retrieve
 
 load_dotenv()
 
-print(">> DEBUG ENV",
-      "AWS_REGION=", os.getenv("AWS_REGION"),
-      "MODEL_ID=", os.getenv("BEDROCK_MODEL_ID"))
+print(
+    ">> DEBUG ENV",
+    "AWS_REGION=",
+    os.getenv("AWS_REGION"),
+    "MODEL_ID=",
+    os.getenv("BEDROCK_MODEL_ID"),
+)
 
 print(">>> BACKEND STARTED (main.py loaded) <<<", flush=True)
 
@@ -31,9 +35,11 @@ bedrock = boto3.client(
     config=Config(retries={"max_attempts": 3, "mode": "standard"}),
 )
 
+
 class HistoryItem(BaseModel):
     role: str
     content: str
+
 
 class ChatRequest(BaseModel):
     message: str
@@ -44,6 +50,7 @@ class ChatRequest(BaseModel):
     top_k: int | None = 4
     history: Optional[List[HistoryItem]] = []
 
+
 @app.post("/ingest")
 def ingest():
     """
@@ -52,6 +59,7 @@ def ingest():
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge"))
     count = ingest_folder(folder)
     return {"ingested_chunks": count}
+
 
 def build_messages(req: ChatRequest):
     recent = (req.history or [])[-6:]
@@ -77,6 +85,7 @@ def build_messages(req: ChatRequest):
     msgs.append({"role": "user", "content": [{"type": "text", "text": user_text}]})
     return msgs
 
+
 def _to_anthropic_messages(history: List[HistoryItem]) -> list[dict]:
     """
     Convert [{"role":"user"/"assistant","content":"..."}] to
@@ -88,9 +97,11 @@ def _to_anthropic_messages(history: List[HistoryItem]) -> list[dict]:
         out.append({"role": role, "content": [{"type": "text", "text": h.content}]})
     return out
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/chat")
 def chat(req: ChatRequest):
@@ -119,8 +130,10 @@ def chat(req: ChatRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def sse_format(data: str) -> bytes:
     return f"data: {data}\n\n".encode("utf-8")
+
 
 @app.post("/chat/stream")
 def chat_stream(req: ChatRequest):
@@ -168,7 +181,6 @@ def chat_stream(req: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 @app.get("/debug/retrieve")
 def debug_retrieve(q: str = Query(...), k: int = 4):
     try:
@@ -181,14 +193,15 @@ def debug_retrieve(q: str = Query(...), k: int = 4):
                     "id": h["id"],
                     "source": h["metadata"].get("source"),
                     "distance": h["distance"],
-                    "preview": (h["text"][:300] + ("..." if len(h["text"]) > 300 else ""))
+                    "preview": (h["text"][:300] + ("..." if len(h["text"]) > 300 else "")),
                 }
                 for h in hits
-            ]
+            ],
         }
     except Exception as e:
         traceback.print_exc()
         from fastapi import HTTPException
+
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -201,6 +214,7 @@ def debug_augment(q: str, k: int = 3):
         max_tokens = 256
         use_rag = True
         top_k = k
+
     msgs = build_messages(TmpReq)
     # return only the user content
     return {"messages": msgs}
