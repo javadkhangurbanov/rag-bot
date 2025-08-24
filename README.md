@@ -88,7 +88,7 @@ Frontend: http://localhost:8501
     docker compose up --build -d
     ```
 4. Access via:
-    - Backend(health): `http://<EC2_PUBLIC_IP>:8000/health`
+    - Backend(health): `http://<EC2_PUBLIC_IP>:8000/health` | For my EC2 instance the public ip is: `54.87.174.113`
     - Frontend: `http://<EC2_PUBLIC_IP>:8501`
 
 ---
