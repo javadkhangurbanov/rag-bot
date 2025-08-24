@@ -1,6 +1,6 @@
-import os
 import glob
-from typing import Iterable, List, Dict, Any
+import os
+from typing import Any, Dict, List
 
 import chromadb
 from chromadb.config import Settings

@@ -1,8 +1,9 @@
 import json
 import os
+
 import requests
-from dotenv import load_dotenv
 import streamlit as st
+from dotenv import load_dotenv
 from sseclient import SSEClient
 
 load_dotenv()

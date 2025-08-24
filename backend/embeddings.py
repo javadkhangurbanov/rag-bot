@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 import boto3
 from botocore.config import Config
 from dotenv import load_dotenv

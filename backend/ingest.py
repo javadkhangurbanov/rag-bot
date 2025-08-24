@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 from .rag_store import ingest_folder
 
 if __name__ == "__main__":

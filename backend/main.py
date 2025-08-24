@@ -1,22 +1,16 @@
-import traceback
 import json
 import os
-from typing import AsyncGenerator
+import traceback
+from typing import AsyncGenerator, List, Optional
 
 import boto3
 from botocore.config import Config
-from fastapi import FastAPI, HTTPException
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from dotenv import load_dotenv
 
-from .rag_store import retrieve, format_context, ingest_folder
-import os
-
-import traceback
-from fastapi import Query
-
-from typing import List, Optional
+from .rag_store import format_context, ingest_folder, retrieve
 
 load_dotenv()
 
@@ -174,8 +168,6 @@ def chat_stream(req: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-import traceback
-from fastapi import Query
 
 @app.get("/debug/retrieve")
 def debug_retrieve(q: str = Query(...), k: int = 4):
