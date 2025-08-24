@@ -1,0 +1,24 @@
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+extend-exclude = [
+  "data/",
+  "assets/",
+  ".venv/",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip = [".venv", "data", "assets"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["data", "assets", ".venv"]
+select = [
+  "E", "F", "I",
+]
+ignore = [
+  "E203",
+]
